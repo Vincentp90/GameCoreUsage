@@ -10,7 +10,9 @@ int main(int argc, char* argv[])
 {
     using namespace boost::interprocess;
 
-    const int FRAMETIMES_INT_SIZE = 5000;
+    const int FRAMETIMES_INT_SIZE = 100;
+
+    //https://www.boost.org/doc/libs/1_54_0/doc/html/interprocess/sharedmemorybetweenprocesses.html
 
     if (argc == 1) {  //Parent process
        //Remove shared memory on construction and destruction
@@ -43,12 +45,13 @@ int main(int argc, char* argv[])
             int* frametime = static_cast<int*>(regionFrametimes.get_address());
             for (int i = 0; i < FRAMETIMES_INT_SIZE;i++)
             {
-                *frametime = 150 + rand() % 50;
-                std::cout << "time: " << *frametime << " ";
+                *frametime = 50 + rand() % 50;
+                //std::cout << "time: " << *frametime << " ";
                 boost::interprocess::winapi::sleep(*frametime);
                 *frametime++;
                 *index = i;
             }
+            std::cout << "completed loop" << std::endl;
         }
     }
     else {
@@ -61,7 +64,7 @@ int main(int argc, char* argv[])
         mapped_region regionIndex(shmindex, read_only);
 
         int ownIndex = 0;
-        for (int i = 0; i < 100; i++) {        
+        for (int i = 0; i < 150; i++) {        
             int* index = static_cast<int*>(regionIndex.get_address());
             int* frametime = static_cast<int*>(regionFrametimes.get_address());
             frametime = frametime + ownIndex;
@@ -72,25 +75,29 @@ int main(int argc, char* argv[])
             int total = 0;
             int count = 0;
             //Test Wrap around
-            for (int j = ownIndex; j % FRAMETIMES_INT_SIZE < *index; j++)
+            for (int j = ownIndex; j % FRAMETIMES_INT_SIZE != *index; j++)
             {
+                std::cout << "j: " << j % FRAMETIMES_INT_SIZE << std::endl;
                 if (j % FRAMETIMES_INT_SIZE == 0)
                 {
                     frametime = static_cast<int*>(regionIndex.get_address());
                 }
                 else
                 {
-                    *frametime++;
+                    frametime++;
                 }
-                std::cout << " " << *frametime;
+                //std::cout << " " << *frametime;
                 count++;                
                 total += *frametime;
             }
-            std::cout << std::endl << "total: " << total << std::endl;
-            std::cout << "count: " << count << std::endl;
-            std::cout << "Calculated avg frametime: " << (total / count) << std::endl;
+            std::cout << "bla" << std::endl;
+            //std::cout << std::endl << "total: " << total << std::endl;
+            //std::cout << "count: " << count << std::endl;
+            if (count > 0) {
+                std::cout << "Calculated avg frametime: " << (total / count) << std::endl;
+            }            
             ownIndex = *index;
-            boost::interprocess::winapi::sleep(2000);
+            boost::interprocess::winapi::sleep(2500);
         }
 
         //Check that memory was initialized to 1
