@@ -1,4 +1,4 @@
-void ImGui::ShowMetricsWindow(bool* p_open)
+void ImGui::ShowMetricsWindowCopied(bool* p_open)
 {
     if (!Begin("Dear ImGui Metrics/Debugger", p_open))
     {
@@ -371,7 +371,7 @@ void ImGui::ShowMetricsWindow(bool* p_open)
 }
 
 
-void ImGui::NewFrame()
+void ImGui::NewFrameCopied()
 {
     IM_ASSERT(GImGui != NULL && "No current context. Did you call ImGui::CreateContext() and ImGui::SetCurrentContext() ?");
     ImGuiContext& g = *GImGui;

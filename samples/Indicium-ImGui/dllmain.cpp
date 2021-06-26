@@ -48,6 +48,9 @@ t_WindowProc OriginalDefWindowProc = nullptr;
 t_WindowProc OriginalWindowProc = nullptr;
 PINDICIUM_ENGINE engine = nullptr;
 
+// FPS Data
+const int FRAMETIMES_INT_SIZE = 5000;
+
 /**
  * \fn  BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID)
  *
@@ -441,6 +444,17 @@ void EvtIndiciumD3D10PostResizeBuffers(
 // TODO: lazy global, improve
 static ID3D11RenderTargetView *g_d3d11_mainRenderTargetView = nullptr;
 
+struct shm_frametimes_remove
+{
+	shm_frametimes_remove() { shared_memory_object::remove("SHMFRAMETIMES"); }
+	~shm_frametimes_remove() { shared_memory_object::remove("SHMFRAMETIMES"); }
+};
+struct shm_index_remove
+{
+	shm_index_remove() { shared_memory_object::remove("SHMINDEX"); }
+	~shm_index_remove() { shared_memory_object::remove("SHMINDEX"); }
+};
+
 void EvtIndiciumD3D11Present(
 	IDXGISwapChain				*pSwapChain,
 	UINT						SyncInterval,
@@ -453,6 +467,13 @@ void EvtIndiciumD3D11Present(
 	static std::once_flag init;
 
 	static ID3D11DeviceContext *pContext;
+
+	static shm_frametimes_remove *frametimes_remover;
+	static shm_index_remove *index_remover;
+	static shared_memory_object *shmframetimes;
+	static shared_memory_object *shmindex;
+	static mapped_region *regionFrametimes;
+	static mapped_region *regionIndex;
 
 	//
 	// This section is only called once to initialize ImGui
@@ -483,6 +504,23 @@ void EvtIndiciumD3D11Present(
 
 		IndiciumEngineLogInfo("ImGui (DX11) initialized");
 
+		// FPS Data
+		frametimes_remover = new shm_frametimes_remove();
+		index_remover = new shm_index_remove();
+		
+		shmframetimes = new shared_memory_object(create_only, "SHMFRAMETIMES", read_write);
+		shmindex = new shared_memory_object(create_only, "SHMINDEX", read_write);
+
+		(*shmframetimes).truncate(FRAMETIMES_INT_SIZE * sizeof(int));
+		(*shmindex).truncate(sizeof(int));
+
+		regionFrametimes = new mapped_region(*shmframetimes, read_write);
+		regionIndex = new mapped_region(*shmindex, read_write);
+
+		int* index = (int*)(*regionIndex).get_address();
+		*index = 0;
+		// End FPS Data
+
 		HookWindowProc(sd.OutputWindow);
 
 		initialized = true;
@@ -504,6 +542,8 @@ void EvtIndiciumD3D11Present(
 	pContext->OMSetRenderTargets(1, &g_d3d11_mainRenderTargetView, NULL);
 
 	RenderScene("D3D11");
+
+	WriteFPSData(regionFrametimes, regionIndex);
 
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
@@ -729,6 +769,25 @@ void RenderScene(string label)
 	}*/
 
 	ImGui::Render();
+}
+
+void WriteFPSData(mapped_region *frametimeReg, mapped_region *indexReg)
+{
+	ImGuiIO& io = ImGui::GetIO();
+	int* index = (int*)(*indexReg).get_address();
+	static int* frametime = static_cast<int*>((*frametimeReg).get_address());
+	if (*index == FRAMETIMES_INT_SIZE)
+	{
+		*index = 0;
+	}
+	if (*index == 0)
+	{
+		frametime = static_cast<int*>((*frametimeReg).get_address());
+	}
+	//save frametime in ms as int
+	*frametime = static_cast<int>(io.DeltaTime*1000);
+	frametime++;
+	*index = *index + 1;
 }
 
 #pragma endregion

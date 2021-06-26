@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 {
     using namespace boost::interprocess;
 
-    const int FRAMETIMES_INT_SIZE = 100;
+    const int FRAMETIMES_INT_SIZE = 5000;
 
     //https://www.boost.org/doc/libs/1_54_0/doc/html/interprocess/sharedmemorybetweenprocesses.html
 
@@ -48,21 +48,25 @@ int main(int argc, char* argv[])
                 *frametime = 50 + rand() % 50;
                 //std::cout << "time: " << *frametime << " ";
                 boost::interprocess::winapi::sleep(*frametime);
-                *frametime++;
+                frametime++;
                 *index = i;
             }
             std::cout << "completed loop" << std::endl;
         }
     }
     else {
+        std::cout << "Starting shared mem read" << std::endl;
+
         //Open already created shared memory object.
         shared_memory_object shmframetimes(open_only, "SHMFRAMETIMES", read_only);
         shared_memory_object shmindex(open_only, "SHMINDEX", read_only);
 
+        std::cout << "mapping region..." << std::endl;
         //Map the whole shared memory in this process
         mapped_region regionFrametimes(shmframetimes, read_only);
         mapped_region regionIndex(shmindex, read_only);
 
+        std::cout << "read loop..." << std::endl;
         int ownIndex = 0;
         for (int i = 0; i < 150; i++) {        
             int* index = static_cast<int*>(regionIndex.get_address());
@@ -77,7 +81,7 @@ int main(int argc, char* argv[])
             //Test Wrap around
             for (int j = ownIndex; j % FRAMETIMES_INT_SIZE != *index; j++)
             {
-                std::cout << "j: " << j % FRAMETIMES_INT_SIZE << std::endl;
+                //std::cout << "j: " << j % FRAMETIMES_INT_SIZE << std::endl;
                 if (j % FRAMETIMES_INT_SIZE == 0)
                 {
                     frametime = static_cast<int*>(regionIndex.get_address());
@@ -90,14 +94,13 @@ int main(int argc, char* argv[])
                 count++;                
                 total += *frametime;
             }
-            std::cout << "bla" << std::endl;
             //std::cout << std::endl << "total: " << total << std::endl;
             //std::cout << "count: " << count << std::endl;
             if (count > 0) {
                 std::cout << "Calculated avg frametime: " << (total / count) << std::endl;
             }            
             ownIndex = *index;
-            boost::interprocess::winapi::sleep(2500);
+            boost::interprocess::winapi::sleep(200);
         }
 
         //Check that memory was initialized to 1

@@ -33,6 +33,10 @@ SOFTWARE.
 #include <Indicium/Engine/IndiciumDirect3D10.h>
 #include <Indicium/Engine/IndiciumDirect3D11.h>
 
+#include <boost/interprocess/shared_memory_object.hpp>
+#include <boost/interprocess/mapped_region.hpp>
+
+using namespace boost::interprocess;
 using namespace std;
 #include <iostream>
 
@@ -59,6 +63,7 @@ LRESULT WINAPI DetourWindowProc(
 
 void HookWindowProc(HWND hWnd);
 void RenderScene(string label);
+void WriteFPSData(mapped_region* frametimeReg, mapped_region* indexReg);
 
 bool ImGui_ImplWin32_UpdateMouseCursor();
 IMGUI_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
