@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 
         std::cout << "read loop..." << std::endl;
         int ownIndex = 0;
-        for (int i = 0; i < 150; i++) {        
+        for (int i = 0; i < 1500; i++) {        
             int* index = static_cast<int*>(regionIndex.get_address());
             int* frametime = static_cast<int*>(regionFrametimes.get_address());
             frametime = frametime + ownIndex;
@@ -97,7 +97,8 @@ int main(int argc, char* argv[])
             //std::cout << std::endl << "total: " << total << std::endl;
             //std::cout << "count: " << count << std::endl;
             if (count > 0) {
-                std::cout << "Calculated avg frametime: " << (total / count) << std::endl;
+                double avg = ((double)total / (double)count) / 1000.00;
+                std::cout << "Calculated avg frametime: " << avg << std::endl;
             }            
             ownIndex = *index;
             boost::interprocess::winapi::sleep(200);

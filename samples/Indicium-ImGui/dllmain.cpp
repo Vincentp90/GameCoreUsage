@@ -785,7 +785,7 @@ void WriteFPSData(mapped_region *frametimeReg, mapped_region *indexReg)
 		frametime = static_cast<int*>((*frametimeReg).get_address());
 	}
 	//save frametime in ms as int
-	*frametime = static_cast<int>(io.DeltaTime*1000);
+	*frametime = static_cast<int>(io.DeltaTime*1000000);
 	frametime++;
 	*index = *index + 1;
 }
