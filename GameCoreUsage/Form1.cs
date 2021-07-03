@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameCoreUsage.Helper;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -19,7 +20,16 @@ namespace GameCoreUsage
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Console.WriteLine(Memory.Test("SHMFRAMETIMES"));
+            //continue try catch
+            try
+            {
+                tbLog.AppendText(SharedMemPath.Test("SHMFRAMETIMES"));
+            }
+            catch(Exception ex)
+            {
+                tbLog.AppendText(ex.Message);
+                tbLog.AppendText(ex.StackTrace);
+            }
         }
     }
 }

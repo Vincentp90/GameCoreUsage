@@ -22,7 +22,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SharedMemTest", "SharedMemT
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GameCoreUsage", "GameCoreUsage", "{6FD5789D-B706-4EF3-8827-527BFD475DD7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameCoreUsage", "GameCoreUsage\GameCoreUsage.csproj", "{820CD579-AD67-409C-933C-CF8372C1D77B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameCoreUsage", "GameCoreUsage\GameCoreUsage.csproj", "{820CD579-AD67-409C-933C-CF8372C1D77B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0C252871-D177-4CFC-BA40-0EAD404FA7FD} = {0C252871-D177-4CFC-BA40-0EAD404FA7FD}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GCUMemReader", "GCUMemReader\GCUMemReader.vcxproj", "{0C252871-D177-4CFC-BA40-0EAD404FA7FD}"
 EndProject

@@ -1,13 +1,9 @@
 #include <boost/interprocess/shared_memory_object.hpp>
 
-extern "C"             //No name mangling
-__declspec(dllexport)  //Tells the compiler to export the function
-std::string             //Function return type     
-__cdecl                //Specifies calling convention, cdelc is default, 
-                       //so this can be omitted 
+#pragma warning(disable : 4996)
 
-    test(char* filename) {
+extern "C" __declspec(dllexport) const void __cdecl test(char* filename, char* buf, int buflength) {
     std::string shmfile;
     boost::interprocess::ipcdetail::create_shared_dir_cleaning_old_and_get_filepath(filename, shmfile);
-    return shmfile;
+    strcpy_s(buf, buflength, shmfile.c_str());
 }
