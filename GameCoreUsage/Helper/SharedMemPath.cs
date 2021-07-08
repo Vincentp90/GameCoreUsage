@@ -20,7 +20,8 @@ namespace GameCoreUsage.Helper
         {
             byte[] buf = new byte[BUFLENGTH];
             test(Encoding.UTF8.GetBytes(name), buf, BUFLENGTH);
-            return System.Text.Encoding.ASCII.GetString(buf);
+            string bufString = System.Text.Encoding.ASCII.GetString(buf);
+            return bufString.Substring(0, bufString.LastIndexOf(name)+name.Length);
         }
     }
 }

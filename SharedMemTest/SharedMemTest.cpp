@@ -1,4 +1,5 @@
 #include <boost/interprocess/shared_memory_object.hpp>
+#include <boost/interprocess/windows_shared_memory.hpp>
 #include <boost/interprocess/mapped_region.hpp>
 #include <cstring>
 #include <cstdlib>
@@ -54,8 +55,31 @@ int main(int argc, char* argv[])
             std::cout << "completed loop" << std::endl;
         }
     }
+    else if(std::string(argv[1]) == "win") {
+        windows_shared_memory shmframetimes(open_or_create, "SHMFRAMETIMES", read_write, FRAMETIMES_INT_SIZE * sizeof(int));
+        windows_shared_memory shmindex(open_or_create, "SHMINDEX", read_write, sizeof(int));
+
+        mapped_region regionFrametimes(shmframetimes, read_write);
+        mapped_region regionIndex(shmindex, read_write);
+
+        int* index = (int*)regionIndex.get_address();
+        while (true)
+        {
+            int* frametime = static_cast<int*>(regionFrametimes.get_address());
+            for (int i = 0; i < FRAMETIMES_INT_SIZE; i++)
+            {
+                *frametime = 50 + rand() % 50;
+                //std::cout << "time: " << *frametime << " ";
+                boost::interprocess::winapi::sleep(*frametime);
+                frametime++;
+                *index = i;
+            }
+            std::cout << "completed loop" << std::endl;
+        }
+    }
     else {
         std::cout << "Starting shared mem read" << std::endl;
+        std::cout << argv[1] << std::endl;
 
         //Open already created shared memory object.
         shared_memory_object shmframetimes(open_only, "SHMFRAMETIMES", read_only);
