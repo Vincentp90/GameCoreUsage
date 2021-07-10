@@ -1,5 +1,4 @@
-﻿using GameCoreUsage.Helper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -23,19 +22,6 @@ namespace GameCoreUsage
         public Form1()
         {
             InitializeComponent();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                tbLog.AppendText(SharedMemPath.Test("SHMFRAMETIMES"));
-            }
-            catch(Exception ex)
-            {
-                tbLog.AppendText(ex.Message);
-                tbLog.AppendText(ex.StackTrace);
-            }
         }
 
         private void button2_Click(object sender, EventArgs e)
