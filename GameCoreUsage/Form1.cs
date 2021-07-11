@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.MemoryMappedFiles;
@@ -121,6 +122,32 @@ namespace GameCoreUsage
         private void btnStop_Click(object sender, EventArgs e)
         {
             source.Cancel();
+        }
+
+        private void btnTestAffinity_Click(object sender, EventArgs e)
+        {
+            using (Process myProcess = Process.GetCurrentProcess())
+            {
+                
+                Process[] procs = Process.GetProcessesByName("FactoryGame-Win64-Shipping");
+                try
+                {
+                    if (procs.Length == 1)
+                    {
+                        Log("ProcessorAffinity: " + myProcess.ProcessorAffinity);
+                        procs[0].ProcessorAffinity = (System.IntPtr)7;
+                        Thread.Sleep(200);
+                        Log("ProcessorAffinity: " + myProcess.ProcessorAffinity);
+                    }
+                }
+                finally
+                {
+                    foreach(Process proc in procs)
+                    {
+                        proc.Dispose();
+                    }
+                }
+            }
         }
     }
 }

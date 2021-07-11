@@ -444,17 +444,6 @@ void EvtIndiciumD3D10PostResizeBuffers(
 // TODO: lazy global, improve
 static ID3D11RenderTargetView *g_d3d11_mainRenderTargetView = nullptr;
 
-struct shm_frametimes_remove
-{
-	shm_frametimes_remove() { shared_memory_object::remove("SHMFRAMETIMES"); }
-	~shm_frametimes_remove() { shared_memory_object::remove("SHMFRAMETIMES"); }
-};
-struct shm_index_remove
-{
-	shm_index_remove() { shared_memory_object::remove("SHMINDEX"); }
-	~shm_index_remove() { shared_memory_object::remove("SHMINDEX"); }
-};
-
 void EvtIndiciumD3D11Present(
 	IDXGISwapChain				*pSwapChain,
 	UINT						SyncInterval,
@@ -468,10 +457,8 @@ void EvtIndiciumD3D11Present(
 
 	static ID3D11DeviceContext *pContext;
 
-	static shm_frametimes_remove *frametimes_remover;
-	static shm_index_remove *index_remover;
-	static shared_memory_object *shmframetimes;
-	static shared_memory_object *shmindex;
+	static windows_shared_memory *shmframetimes;
+	static windows_shared_memory *shmindex;
 	static mapped_region *regionFrametimes;
 	static mapped_region *regionIndex;
 
@@ -505,17 +492,11 @@ void EvtIndiciumD3D11Present(
 		IndiciumEngineLogInfo("ImGui (DX11) initialized");
 
 		// FPS Data
-		frametimes_remover = new shm_frametimes_remove();
-		index_remover = new shm_index_remove();
-		
-		shmframetimes = new shared_memory_object(create_only, "SHMFRAMETIMES", read_write);
-		shmindex = new shared_memory_object(create_only, "SHMINDEX", read_write);
-
-		(*shmframetimes).truncate(FRAMETIMES_INT_SIZE * sizeof(int));
-		(*shmindex).truncate(sizeof(int));
+		shmframetimes = new windows_shared_memory(open_or_create, "SHMFRAMETIMES", read_write, FRAMETIMES_INT_SIZE * sizeof(int));
+		shmindex = new windows_shared_memory(open_or_create, "SHMINDEX", read_write, sizeof(int));
 
 		regionFrametimes = new mapped_region(*shmframetimes, read_write);
-		regionIndex = new mapped_region(*shmindex, read_write);
+		regionIndex = new mapped_region(*shmindex, read_write);		
 
 		int* index = (int*)(*regionIndex).get_address();
 		*index = 0;

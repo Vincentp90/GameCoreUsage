@@ -37,6 +37,7 @@ namespace GameCoreUsage
             this.tbFPS = new System.Windows.Forms.TextBox();
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
+            this.btnTestAffinity = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // tbLog
@@ -109,11 +110,22 @@ namespace GameCoreUsage
             this.btnStop.UseVisualStyleBackColor = true;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
+            // btnTestAffinity
+            // 
+            this.btnTestAffinity.Location = new System.Drawing.Point(459, 12);
+            this.btnTestAffinity.Name = "btnTestAffinity";
+            this.btnTestAffinity.Size = new System.Drawing.Size(117, 26);
+            this.btnTestAffinity.TabIndex = 9;
+            this.btnTestAffinity.Text = "Test affinity";
+            this.btnTestAffinity.UseVisualStyleBackColor = true;
+            this.btnTestAffinity.Click += new System.EventHandler(this.btnTestAffinity_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(907, 616);
+            this.Controls.Add(this.btnTestAffinity);
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.btnStart);
             this.Controls.Add(this.tbFPS);
@@ -139,6 +151,7 @@ namespace GameCoreUsage
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Button Stop;
         private System.Windows.Forms.Button btnStop;
+        private System.Windows.Forms.Button btnTestAffinity;
     }
 }
 

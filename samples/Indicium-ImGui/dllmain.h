@@ -33,7 +33,8 @@ SOFTWARE.
 #include <Indicium/Engine/IndiciumDirect3D10.h>
 #include <Indicium/Engine/IndiciumDirect3D11.h>
 
-#include <boost/interprocess/shared_memory_object.hpp>
+//#include <boost/interprocess/shared_memory_object.hpp>
+#include <boost/interprocess/windows_shared_memory.hpp>
 #include <boost/interprocess/mapped_region.hpp>
 
 using namespace boost::interprocess;
