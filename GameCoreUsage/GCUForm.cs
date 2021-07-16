@@ -1,4 +1,5 @@
-﻿using GameCoreUsage.Memory;
+﻿using GameCoreUsage.Helper;
+using GameCoreUsage.Memory;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -125,6 +126,10 @@ namespace GameCoreUsage
             }
         }
 
-        
+        private void btnMeasure_Click(object sender, EventArgs e)
+        {
+            //Continue
+            GameProcess game = GameProcess.Create("FactoryGame-Win64-Shipping");
+        }
     }
 }

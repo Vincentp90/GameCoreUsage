@@ -89,7 +89,7 @@ namespace GameCoreUsage
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(117, 26);
             this.btnStart.TabIndex = 7;
-            this.btnStart.Text = "Start";
+            this.btnStart.Text = "Start reader";
             this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
@@ -99,7 +99,7 @@ namespace GameCoreUsage
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(117, 26);
             this.btnStop.TabIndex = 8;
-            this.btnStop.Text = "Stop";
+            this.btnStop.Text = "Stop reader";
             this.btnStop.UseVisualStyleBackColor = true;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
@@ -131,6 +131,7 @@ namespace GameCoreUsage
             this.btnMeasure.TabIndex = 11;
             this.btnMeasure.Text = "Measure";
             this.btnMeasure.UseVisualStyleBackColor = true;
+            this.btnMeasure.Click += new System.EventHandler(this.btnMeasure_Click);
             // 
             // dataGridView1
             // 
