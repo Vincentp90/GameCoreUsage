@@ -36,11 +36,12 @@ namespace GameCoreUsage
             this.tbFPS = new System.Windows.Forms.TextBox();
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
-            this.btnTestAffinity = new System.Windows.Forms.Button();
             this.btnInit = new System.Windows.Forms.Button();
             this.btnMeasure = new System.Windows.Forms.Button();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.dataGridCores = new System.Windows.Forms.DataGridView();
+            this.btnTest1 = new System.Windows.Forms.Button();
+            this.btnTest2 = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridCores)).BeginInit();
             this.SuspendLayout();
             // 
             // tbLog
@@ -103,16 +104,6 @@ namespace GameCoreUsage
             this.btnStop.UseVisualStyleBackColor = true;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
-            // btnTestAffinity
-            // 
-            this.btnTestAffinity.Location = new System.Drawing.Point(459, 12);
-            this.btnTestAffinity.Name = "btnTestAffinity";
-            this.btnTestAffinity.Size = new System.Drawing.Size(117, 26);
-            this.btnTestAffinity.TabIndex = 9;
-            this.btnTestAffinity.Text = "Test affinity";
-            this.btnTestAffinity.UseVisualStyleBackColor = true;
-            this.btnTestAffinity.Click += new System.EventHandler(this.btnTestAffinity_Click);
-            // 
             // btnInit
             // 
             this.btnInit.Location = new System.Drawing.Point(12, 49);
@@ -125,6 +116,7 @@ namespace GameCoreUsage
             // 
             // btnMeasure
             // 
+            this.btnMeasure.Enabled = false;
             this.btnMeasure.Location = new System.Drawing.Point(222, 124);
             this.btnMeasure.Name = "btnMeasure";
             this.btnMeasure.Size = new System.Drawing.Size(117, 26);
@@ -133,24 +125,45 @@ namespace GameCoreUsage
             this.btnMeasure.UseVisualStyleBackColor = true;
             this.btnMeasure.Click += new System.EventHandler(this.btnMeasure_Click);
             // 
-            // dataGridView1
+            // dataGridCores
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(624, 12);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowTemplate.Height = 25;
-            this.dataGridView1.Size = new System.Drawing.Size(271, 592);
-            this.dataGridView1.TabIndex = 12;
+            this.dataGridCores.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridCores.Location = new System.Drawing.Point(624, 12);
+            this.dataGridCores.Name = "dataGridCores";
+            this.dataGridCores.RowTemplate.Height = 25;
+            this.dataGridCores.Size = new System.Drawing.Size(271, 592);
+            this.dataGridCores.TabIndex = 12;
+            // 
+            // btnTest1
+            // 
+            this.btnTest1.Location = new System.Drawing.Point(476, 12);
+            this.btnTest1.Name = "btnTest1";
+            this.btnTest1.Size = new System.Drawing.Size(117, 26);
+            this.btnTest1.TabIndex = 13;
+            this.btnTest1.Text = "Add core";
+            this.btnTest1.UseVisualStyleBackColor = true;
+            this.btnTest1.Click += new System.EventHandler(this.btnTest1_Click);
+            // 
+            // btnTest2
+            // 
+            this.btnTest2.Location = new System.Drawing.Point(476, 43);
+            this.btnTest2.Name = "btnTest2";
+            this.btnTest2.Size = new System.Drawing.Size(117, 26);
+            this.btnTest2.TabIndex = 14;
+            this.btnTest2.Text = "Remove core";
+            this.btnTest2.UseVisualStyleBackColor = true;
+            this.btnTest2.Click += new System.EventHandler(this.btnTest2_Click);
             // 
             // GCUForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(907, 616);
-            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.btnTest2);
+            this.Controls.Add(this.btnTest1);
+            this.Controls.Add(this.dataGridCores);
             this.Controls.Add(this.btnMeasure);
             this.Controls.Add(this.btnInit);
-            this.Controls.Add(this.btnTestAffinity);
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.btnStart);
             this.Controls.Add(this.tbFPS);
@@ -161,7 +174,7 @@ namespace GameCoreUsage
             this.Name = "GCUForm";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.GCUForm_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridCores)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -176,10 +189,11 @@ namespace GameCoreUsage
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Button Stop;
         private System.Windows.Forms.Button btnStop;
-        private System.Windows.Forms.Button btnTestAffinity;
         private System.Windows.Forms.Button btnInit;
         private System.Windows.Forms.Button btnMeasure;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView dataGridCores;
+        private System.Windows.Forms.Button btnTest1;
+        private System.Windows.Forms.Button btnTest2;
     }
 }
 

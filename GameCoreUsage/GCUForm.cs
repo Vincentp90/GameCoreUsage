@@ -21,6 +21,7 @@ namespace GameCoreUsage
     public partial class GCUForm : Form
     {
         private FrametimeReader reader;
+        private GameProcess game;
         private BindingSource bindingSource = new BindingSource();
         Dictionary<int, bool> activeCores;
 
@@ -33,7 +34,7 @@ namespace GameCoreUsage
 
         private void GCUForm_Load(object sender, EventArgs e)
         {
-            dataGridView1.DataSource = bindingSource;
+            dataGridCores.DataSource = bindingSource;
             activeCores = new Dictionary<int, bool>();
             for (int i = 0; i < CORECOUNT; i++)
             {
@@ -46,19 +47,9 @@ namespace GameCoreUsage
         private void btnInit_Click(object sender, EventArgs e)
         {
             reader = new FrametimeReader(this, tbFrametime);
-
-            //this creates 32 length array
-            BitArray b = new BitArray(new int[] { 7 });
-            for(int i = 0; i < CORECOUNT; i++)
-            {
-                activeCores[i] = b[i];
-            }
-            //TODO fix scuffed https://stackoverflow.com/a/1118992
-            bindingSource.DataSource = typeof(Dictionary<int, bool>);
-            bindingSource.DataSource = activeCores;
+            game = GameProcess.Create("FactoryGame-Win64-Shipping");
+            btnMeasure.Enabled = true;
         }
-
-
 
         public void UpdateTextbox(TextBox tb, string text)
         {
@@ -91,45 +82,77 @@ namespace GameCoreUsage
             reader.Stop();
         }
 
-        private void btnTestAffinity_Click(object sender, EventArgs e)
+        private void UpdateDataGridCores(BitArray b)
         {
-            using (Process myProcess = Process.GetCurrentProcess())
+            //this creates 32 length array
+            //BitArray b = new BitArray(new int[] { affinity });
+            for (int i = 0; i < CORECOUNT; i++)
             {
-                
-                Process[] procs = Process.GetProcessesByName("FactoryGame-Win64-Shipping");
-                try
-                {
-                    if (procs.Length == 1)
-                    {
-                        Log("ProcessorAffinity: " + myProcess.ProcessorAffinity);
-                        procs[0].ProcessorAffinity = (System.IntPtr)7;
-                        Thread.Sleep(200);
-                        Log("ProcessorAffinity: " + myProcess.ProcessorAffinity);
-
-                        BitArray b = new BitArray(new int[] { 7 });
-                        foreach(var core in activeCores)
-                        {
-                            if (core.Key > b.Length)
-                                activeCores[core.Key] = false;
-                            else
-                                activeCores[core.Key] = b[core.Key];
-                        }
-                    }
-                }
-                finally
-                {
-                    foreach(Process proc in procs)
-                    {
-                        proc.Dispose();
-                    }
-                }
+                activeCores[i] = b[i];
             }
+            //TODO fix scuffed https://stackoverflow.com/a/1118992
+            bindingSource.DataSource = typeof(Dictionary<int, bool>);
+            bindingSource.DataSource = activeCores;
         }
 
+        private void InvokeUpdateDGCores()
+        {
+            dataGridCores.Invoke(new Action<BitArray>(UpdateDataGridCores), game.GetAffinityBitArray());
+        }
+
+        private const int ITERATIONS = 500;
+        private const int SLEEPDUR = 410;
         private void btnMeasure_Click(object sender, EventArgs e)
         {
-            //Continue
-            GameProcess game = GameProcess.Create("FactoryGame-Win64-Shipping");
+            reader.Start();
+            game.SetPCoresActive(2);
+            Thread.Sleep(SLEEPDUR);
+            UpdateDataGridCores(game.GetAffinityBitArray());
+            Task.Factory.StartNew(() =>
+            {
+                double previousAvg = reader.AverageFrametime;
+                double avg;
+                int[] coresActiveLog = new int[ITERATIONS];
+                Thread.Sleep(SLEEPDUR);
+                bool wasIncreased = true;
+                for (int i = 0; i < ITERATIONS; i++)
+                {
+                    avg = reader.AverageFrametime;
+                    if (previousAvg > avg * (wasIncreased ? 1.00005 : 0.99995))
+                    {
+                        game.Increase();
+                        wasIncreased = true;
+                    }
+                    else
+                    {
+                        game.Decrease();
+                        wasIncreased = false;
+                    }                        
+                    coresActiveLog[i] = game.ActiveVCores;
+                    previousAvg = avg;
+                    Thread.Sleep(SLEEPDUR);
+                    InvokeUpdateDGCores();                   
+                }
+                //Continue
+                //post processing:
+                //sum each corecount in coresActiveLog and print
+                //print avg active core count
+                // take median from active core count or repeat until x sigma core count values are the same
+            });            
+        }
+
+        private void btnTest1_Click(object sender, EventArgs e)
+        {
+            game.Increase();
+            Thread.Sleep(200);
+            UpdateDataGridCores(game.GetAffinityBitArray());
+        }
+
+        private void btnTest2_Click(object sender, EventArgs e)
+        {
+            game.Decrease();
+            Thread.Sleep(200);
+            UpdateDataGridCores(game.GetAffinityBitArray());
         }
     }
 }
